@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "env.db_name",
+    "type": "java.lang.String",
+    "description": "A description for 'env.db_name'"
+  },
+  {
+    "name": "env.db_username",
+    "type": "java.lang.String",
+    "description": "A description for 'env.db_username'"
+  },
+  {
+    "name": "env.db_password",
+    "type": "java.lang.String",
+    "description": "A description for 'env.db_password'"
+  },
+  {
+    "name": "env.db_host",
+    "type": "java.lang.String",
+    "description": "A description for 'env.db_host'"
+  },
+  {
+    "name": "env.dev_server_port",
+    "type": "java.lang.String",
+    "description": "A description for 'env.dev_server_port'"
+  }
+]}
