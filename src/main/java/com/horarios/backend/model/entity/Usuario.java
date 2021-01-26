@@ -2,8 +2,7 @@ package com.horarios.backend.model.entity;
 
 import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.CascadeType;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -47,7 +46,7 @@ public class Usuario implements Serializable {
 	private Boolean enabled;
 	
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name="usuarios_horarios",
     joinColumns=
         @JoinColumn(name="usuario_id", referencedColumnName="id"),
@@ -126,6 +125,15 @@ public class Usuario implements Serializable {
 
 	public void setHorarios(List<Horario> horarios) {
 		this.horarios = horarios;
+	}
+	
+	public void actualizarHorarios(Horario horario) {
+		boolean existeHorario = this.horarios.stream().anyMatch(h -> h.getId() == horario.getId());
+		if (existeHorario) {
+			this.horarios = this.horarios.stream().filter(h -> h.getId() != horario.getId()).collect(Collectors.toList());
+		} else {
+			this.horarios.add(horario);
+		}
 	}
 	
 }

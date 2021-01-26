@@ -32,7 +32,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	
 	public JWTAuthenticationFilter(AuthenticationManager authenticationManager, JWTService jwtService) {
 		this.authenticationManager = authenticationManager;
-		setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/horarios/login", "POST"));
+		setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/login", "POST"));
 		
 		this.jwtService = jwtService;
 	}
@@ -89,7 +89,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		
 		response.getWriter().write(new ObjectMapper().writeValueAsString(body));
 		response.setContentType("application/json");
-		response.setStatus(404);
+		response.setStatus(400);
 	}
 
 }

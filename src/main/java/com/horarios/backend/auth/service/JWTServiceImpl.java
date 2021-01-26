@@ -2,9 +2,11 @@ package com.horarios.backend.auth.service;
 
 import java.io.IOException;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +64,12 @@ public class JWTServiceImpl implements JWTService {
 	}
 	
 	public String createForGoogleSignIn(Usuario usuario) throws IOException {
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		SimpleGrantedAuthority rol = new SimpleGrantedAuthority(usuario.getRol().getNombre());
+		authorities.add(rol);
+		
 		Claims claims = Jwts.claims();
+		claims.put("authorities", new ObjectMapper().writeValueAsString(authorities));
 		claims.put("usuario", new ObjectMapper().writeValueAsString(usuario));
 		claims.put("expiration", new ObjectMapper().writeValueAsString(EXPIRATION_DATE));
 		

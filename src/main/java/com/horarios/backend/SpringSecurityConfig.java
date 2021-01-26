@@ -47,8 +47,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-		.antMatchers(HttpMethod.POST, "/api/googleSignIn/login", "/api/usuarios").permitAll()
-		.antMatchers("/api/ws/**").permitAll()
+		.antMatchers(HttpMethod.POST, "/api/googleSignIn/login", "/api/login", "/api/usuarios").permitAll()
+		.antMatchers("/ws/**").permitAll()
 		.anyRequest().authenticated()
 		.and()
 		.cors().configurationSource(corsConfigurationSource())

@@ -17,6 +17,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.horarios.backend.auth.service.JWTService;
+import com.horarios.backend.model.entity.Rol;
 import com.horarios.backend.model.entity.Usuario;
 import com.horarios.backend.services.UsuarioService;
 
@@ -50,6 +51,8 @@ public class GoogleLoginController {
 				if (usuarioExistente == null) {
 					// se registra el nuevo usuario y se genera su token
 					usuarioExistente = new Usuario();
+					usuarioExistente.setRol(new Rol());
+					usuarioExistente.getRol().setId(1L);
 					usuarioExistente.setEmail(email);
 					usuarioExistente.setFoto(pictureUrl);
 					usuarioExistente.setEnabled(true);
