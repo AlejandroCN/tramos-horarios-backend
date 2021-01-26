@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,7 +46,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/api/ws/**").permitAll()
+		http.authorizeRequests()
+		.antMatchers(HttpMethod.POST, "/api/googleSignIn/login", "/api/usuarios").permitAll()
+		.antMatchers("/api/ws/**").permitAll()
 		.anyRequest().authenticated()
 		.and()
 		.cors().configurationSource(corsConfigurationSource())

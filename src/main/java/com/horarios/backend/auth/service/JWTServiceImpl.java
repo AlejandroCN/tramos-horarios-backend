@@ -60,6 +60,17 @@ public class JWTServiceImpl implements JWTService {
 				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_DATE)).compact();
 		return token;
 	}
+	
+	public String createForGoogleSignIn(Usuario usuario) throws IOException {
+		Claims claims = Jwts.claims();
+		claims.put("usuario", new ObjectMapper().writeValueAsString(usuario));
+		claims.put("expiration", new ObjectMapper().writeValueAsString(EXPIRATION_DATE));
+		
+		String token = Jwts.builder().setClaims(claims).setSubject(usuario.getEmail())
+				.signWith(SECRET_KEY).setIssuedAt(new Date())
+				.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_DATE)).compact();
+		return token;
+	}
 
 	@Override
 	public boolean validate(String token) {

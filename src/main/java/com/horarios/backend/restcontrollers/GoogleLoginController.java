@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.horarios.backend.auth.service.JWTService;
+import com.horarios.backend.model.entity.Usuario;
+import com.horarios.backend.services.UsuarioService;
 
 @RestController
 @RequestMapping("api/googleSignIn")
@@ -24,23 +27,46 @@ public class GoogleLoginController {
 	@Autowired
 	private GoogleIdTokenVerifier tokenVerifier;
 	
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private JWTService JwtService;
+	
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestParam String tokenId) {
 		Map<String, Object> response = new HashMap<String, Object>();
+		Usuario usuarioExistente = null;
 
 		try {
 			GoogleIdToken idToken = this.tokenVerifier.verify(tokenId);
 			if (idToken != null) {
-				Payload payload = idToken.getPayload();
-			
 				// Get profile information from payload
+				Payload payload = idToken.getPayload();
 				String email = payload.getEmail();
-				String name = (String) payload.get("name");
 				String pictureUrl = (String) payload.get("picture");
 				
-				response.put("email", email);
-				response.put("name", name);
-				response.put("pictureUrl", pictureUrl);
+				usuarioExistente = this.usuarioService.findByEmail(email);
+				if (usuarioExistente == null) {
+					// se registra el nuevo usuario y se genera su token
+					usuarioExistente = new Usuario();
+					usuarioExistente.setEmail(email);
+					usuarioExistente.setFoto(pictureUrl);
+					usuarioExistente.setEnabled(true);
+					usuarioExistente.setSignUpWithGoogle(true);
+					this.usuarioService.save(usuarioExistente);
+					
+					String token = this.JwtService.createForGoogleSignIn(usuarioExistente);
+					response.put("token", token);
+				} else if (usuarioExistente.getSignUpWithGoogle()) {
+					// se genera el token del usuario
+					String token = this.JwtService.createForGoogleSignIn(usuarioExistente);
+					response.put("token", token);
+				} else {
+					// el correo electrónico ya existe en la tabla de usuarios y no se puede proceder
+					response.put("mensaje", "Ya existe un registro con el correo asociado a su cuenta de Google");
+					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+				}
 			} else {
 				response.put("mensaje", "Token ID inválido");
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.UNAUTHORIZED);

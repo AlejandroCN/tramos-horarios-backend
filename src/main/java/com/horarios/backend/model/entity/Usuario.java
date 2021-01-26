@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -34,6 +35,9 @@ public class Usuario implements Serializable {
 	private String foto;
 	
 	private String password;
+	
+	@Column(name = "signed_up_with_google")
+	private Boolean signUpWithGoogle;
 	
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -90,6 +94,14 @@ public class Usuario implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public Boolean getSignUpWithGoogle() {
+		return signUpWithGoogle;
+	}
+	
+	public void setSignUpWithGoogle(Boolean signUpWithGoogle) {
+		this.signUpWithGoogle = signUpWithGoogle;
 	}
 	
 	public Rol getRol() {

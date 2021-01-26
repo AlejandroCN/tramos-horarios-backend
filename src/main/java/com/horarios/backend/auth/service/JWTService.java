@@ -6,11 +6,15 @@ import java.util.Collection;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
+import com.horarios.backend.model.entity.Usuario;
+
 import io.jsonwebtoken.Claims;
 
 public interface JWTService {
 	
 	public String create(Authentication auth) throws IOException;
+	
+	public String createForGoogleSignIn(Usuario usuario) throws IOException;
 	
 	public boolean validate(String token);
 	

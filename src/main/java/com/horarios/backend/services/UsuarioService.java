@@ -8,4 +8,6 @@ public interface UsuarioService {
 	
 	public Usuario findByUsername(String username);
 	
+	public Usuario findByEmail(String email);
+	
 }

@@ -25,4 +25,10 @@ public class UsuarioServiceImp implements UsuarioService {
 		return this.usuarioDao.findByUsername(username);
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public Usuario findByEmail(String email) {
+		return this.usuarioDao.findByEmail(email);
+	}
+
 }
