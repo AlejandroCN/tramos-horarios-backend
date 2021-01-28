@@ -38,11 +38,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private JWTService jwtService;
 	
-	@Value("${env.db_host}")
-	private String host;
-	
-	@Value("${env.dev_server_port}")
-	private String port;
+	@Value("${env.client_host}")
+	private String clientHost;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -69,7 +66,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://" + this.host + ":" + this.port));
+		config.setAllowedOrigins(Arrays.asList(this.clientHost));
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		config.setAllowCredentials(true);
 		config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));

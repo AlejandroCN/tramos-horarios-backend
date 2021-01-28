@@ -23,5 +23,10 @@
     "name": "env.dev_server_port",
     "type": "java.lang.String",
     "description": "A description for 'env.dev_server_port'"
+  },
+  {
+    "name": "env.client_host",
+    "type": "java.lang.String",
+    "description": "A description for 'env.client_host'"
   }
 ]}

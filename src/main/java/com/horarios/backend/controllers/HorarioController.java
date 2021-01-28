@@ -25,8 +25,18 @@ public class HorarioController {
 	
 	Logger logger = LoggerFactory.getLogger(HorarioController.class);
 	
-	@MessageMapping("/reservarHorario")	    	// a esta url se publica desde el cliente (/app/reservarHorario)
-	@SendTo("/realtime/cambioHorarios")			// a esta url se subscriben los clientes  (/realtime/cambioHorarios)
+	/**
+	 * Asocia un horario existente a un usuario indicado, además, incrementa en 1 unidad el valor del atributo
+	 * contadorReservaciones de dicho horario.
+	 * Este método deberia ser llamado desde el cliente solo si el usuario no tiene actualmente asociado el horario a modificar,
+	 * contiene una validación que previene esa situación ya que causaría inconsistencias en el contador de reservaciones.
+	 * @param cambioHorario es un encapsulado que contiene el usuario autenticado y el horario que se debe asociar y actualizar.
+	 * @return null si no existe el horario con el id indicado, si no existe el usuario con el id indicado o si ocurre un
+	 * error en la capa de acceso a datos. Si se realiza el cambio se devuelve tanto el usuario como el horario actualizados,
+	 * si no ocurre el cambio se devuelve el mismo objeto de tipo CambioHorario que se recibe por parámetro. 
+	 */
+	@MessageMapping("/reservarHorario")
+	@SendTo("/realtime/cambioHorarios")
 	public CambioHorario reservarHorario(CambioHorario cambioHorario) {
 		Horario horarioExistente = null;
 		Usuario usuarioImplicado = null;
@@ -39,12 +49,16 @@ public class HorarioController {
 				return null;
 			}
 			
-			horarioExistente.setContadorReservaciones(horarioExistente.getContadorReservaciones() + 1);
-			cambioRealizado.setHorarioAModificar(this.horarioService.save(horarioExistente));
-			
-			usuarioImplicado.actualizarHorarios(cambioRealizado.getHorarioAModificar());
-			this.usuarioService.save(usuarioImplicado);
-			cambioRealizado.setUsuario(usuarioImplicado);
+			if (!usuarioImplicado.getHorarios().stream().anyMatch(h -> h.getId() == cambioHorario.getHorarioAModificar().getId())) {
+				horarioExistente.setContadorReservaciones(horarioExistente.getContadorReservaciones() + 1);
+				cambioRealizado.setHorarioAModificar(this.horarioService.save(horarioExistente));
+				
+				usuarioImplicado.actualizarHorarios(cambioRealizado.getHorarioAModificar());
+				this.usuarioService.save(usuarioImplicado);
+				cambioRealizado.setUsuario(usuarioImplicado);
+			} else {
+				return cambioHorario;
+			}
 		} catch (DataAccessException ex) {
 			return null;
 		}
@@ -52,8 +66,18 @@ public class HorarioController {
 		return cambioRealizado;
 	}
 	
-	@MessageMapping("/liberarHorario")	    	// a esta url se publica desde el cliente (/app/reservarHorario)
-	@SendTo("/realtime/cambioHorarios")			// a esta url se subscriben los clientes  (/realtime/cambioHorarios)
+	/**
+	 * Desasocia un horario existente de un usuario indicado, además, decrementa en 1 unidad el valor del atributo
+	 * contadorReservaciones de dicho horario.
+	 * Este método deberia ser llamado desde el cliente solo si el usuario tiene actualmente asociado el horario a modificar,
+	 * contiene una validación que previene esa situación ya que causaría inconsistencias en el contador de reservaciones.
+	 * @param cambioHorario es un encapsulado que contiene el usuario autenticado y el horario que se debe asociar y actualizar.
+	 * @return null si no existe el horario con el id indicado, si no existe el usuario con el id indicado o si ocurre un
+	 * error en la capa de acceso a datos. Si se realiza el cambio se devuelve tanto el usuario como el horario actualizados,
+	 * si no ocurre el cambio se devuelve el mismo objeto de tipo CambioHorario que se recibe por parámetro. 
+	 */
+	@MessageMapping("/liberarHorario")
+	@SendTo("/realtime/cambioHorarios")
 	public CambioHorario liberarHorario(CambioHorario cambioHorario) {
 		Horario horarioExistente = null;
 		Usuario usuarioImplicado = null;
@@ -66,12 +90,16 @@ public class HorarioController {
 				return null;
 			}
 			
-			horarioExistente.setContadorReservaciones(horarioExistente.getContadorReservaciones() - 1);
-			cambioRealizado.setHorarioAModificar(this.horarioService.save(horarioExistente));
-			
-			usuarioImplicado.actualizarHorarios(cambioRealizado.getHorarioAModificar());
-			this.usuarioService.save(usuarioImplicado);
-			cambioRealizado.setUsuario(usuarioImplicado);
+			if (usuarioImplicado.getHorarios().stream().anyMatch(h -> h.getId() == cambioHorario.getHorarioAModificar().getId())) {
+				horarioExistente.setContadorReservaciones(horarioExistente.getContadorReservaciones() - 1);
+				cambioRealizado.setHorarioAModificar(this.horarioService.save(horarioExistente));
+				
+				usuarioImplicado.actualizarHorarios(cambioRealizado.getHorarioAModificar());
+				this.usuarioService.save(usuarioImplicado);
+				cambioRealizado.setUsuario(usuarioImplicado);
+			} else {
+				return cambioHorario;
+			}
 		} catch (DataAccessException ex) {
 			return null;
 		}
