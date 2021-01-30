@@ -9,7 +9,7 @@ import com.horarios.backend.model.entity.Usuario;
  * Clase simple que contiene un usuario y un horario a modificar
  * @author AlejandroCN
  */
-public class CambioHorario implements Serializable {
+public class CambioHorario extends StompMessage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
