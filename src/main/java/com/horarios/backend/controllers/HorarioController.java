@@ -47,7 +47,6 @@ public class HorarioController {
 			}
 			usuarioImplicado.actualizarHorarios(cambioHorario.getHorarioAModificar());
 			this.usuarioService.save(usuarioImplicado);
-			cambioRealizado.setUsuario(usuarioImplicado);
 			cambioRealizado.setHorarioAModificar(this.horarioService.findById(cambioHorario.getHorarioAModificar().getId()));
 		} catch (DataAccessException ex) {
 			cambioHorario.setError(true);
@@ -55,6 +54,8 @@ public class HorarioController {
 			return cambioHorario;
 		}
 		
+    usuarioImplicado.setPassword("");
+		cambioRealizado.setUsuario(usuarioImplicado);
 		return cambioRealizado;
 	}
 
